@@ -6,16 +6,22 @@
 #define ASYNC_NET__ACCEPTEVENT_H_
 
 #include <memory>
+#include <functional>
 #include "SocketEventHandler.h"
+#include "StreamSocket.h"
+#include "Reactor.h"
 
+using AcceptHandler = std::function<void(std::error_code, StreamSocket)>;
 
 class AcceptEvent: public SocketEventHandler, std::enable_shared_from_this<AcceptEvent>{
 public:
 
-    void handle() override {
+    void handle() override;
 
-    }
-
+private:
+    Reactor& reactor_;
+    SocketEventData& socketEventData_;
+    AcceptHandler handler_;
 
 };
 

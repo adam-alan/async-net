@@ -9,3 +9,8 @@ Acceptor::Acceptor(Reactor reactor, short port)
     streamSocket_.bind(port);
     streamSocket_.listen();
 }
+
+
+void Acceptor::accept(AcceptHandler handler) {
+
+}

@@ -6,8 +6,7 @@
 #define ASYNC_NET__ACCEPTOR_H_
 
 #include "StreamSocket.h"
-
-using AcceptHandler = std::function<void(std::error_code, StreamSocket)>;
+#include "AcceptEvent.h"
 
 
 class Acceptor {

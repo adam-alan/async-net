@@ -70,7 +70,7 @@ private:
     SocketEventData& socketEventData_;
     Buffer buffer_;
     WriteCompleteHandler handler_;
-    size_t totalBytes_{};
+    size_t totalBytes_{0};
     size_t initSize_{buffer_.size()};
 };
 

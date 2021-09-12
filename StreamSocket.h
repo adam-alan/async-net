@@ -31,6 +31,11 @@ public:
         makeNoBlock(socketEventData_.fd);
     }
 
+
+    StreamSocket(Reactor& reactor, int fd)
+        : reactor_(reactor){
+        socketEventData_.fd = fd;
+    }
     void bind(short port) const;
 
     void listen();
@@ -39,6 +44,7 @@ public:
 
     void write(Buffer buffer, WriteCompleteHandler handler);
 
+//    void accept()
 
 private:
 

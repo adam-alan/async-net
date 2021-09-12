@@ -63,7 +63,7 @@ private:
     SocketEventData& socketEventData_;
     Buffer buffer_;
     ReadCompleteHandler handler_;
-    size_t totalBytes_{};
+    size_t totalBytes_{0};
     size_t initSize_{buffer_.size()};
 };
 #endif //ASYNC_NET__READFULL_H_
