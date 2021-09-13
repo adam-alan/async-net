@@ -23,17 +23,23 @@ void Reactor::run() {
         for (int i = 0;i < nfs; ++i) {
 
             auto data = (SocketEventData*)events[i].data.ptr;
-
+//            std::cout << data->writeQ.size() << std::endl;
+//            std::cout << data->connectQ.size() << std::endl;
+//            std::cout << data->readQ.size() << std::endl;
             if (events[i].events == EPOLLOUT ) {
-                if (!data->connectQ.empty()) {
-                    auto front = data->connectQ.front();
-                    front->handle();
-                    data->connectQ.pop();
-                }
+//                if (!data->connectQ.empty()) {
+//                    auto front = data->connectQ.front();
+//                    front->handle();
+//                    data->connectQ.pop();
+//                }
 
                 if (!data->writeQ.empty()) {
-                    auto front = data->writeQ.front();
-                    front->handle();
+                    std::cout << "write register" << std::endl;
+                    std::cout << data->writeQ.size() << std::endl;
+                    std::cout << data->connectQ.size() << std::endl;
+                    std::cout << data->readQ.size() << std::endl;
+                    data->writeQ.front()->handle();
+
                     data->writeQ.pop();
                 }
 
@@ -61,12 +67,7 @@ void Reactor::registerRead(SocketEventData& socketEventData) {
     ::epoll_event ev{};
     ev.events = EPOLLIN;
     ev.data.ptr = &socketEventData;
-    auto data = (SocketEventData*)ev.data.ptr;
 
-    std::cout << data->fd << std::endl;
-    std::cout << data->readQ.size() << std::endl;
-    std::cout << data->writeQ.size() << std::endl;
-    std::cout << data->connectQ.size() << std::endl;
     if (wrapper_->modify(socketEventData.fd, ev)) {
         throw std::system_error{errno, std::system_category()};
     }

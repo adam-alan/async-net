@@ -44,27 +44,13 @@ public:
             handler_({}, totalBytes_);
             return;
         }
-        registerEvent();
+        buffer_.moveStep(bytes);
+        socketEventData_.writeQ.push(shared_from_this());
+        reactor_.registerWrite(socketEventData_);
     }
 
 private:
-    void registerEvent() {
-        epoll_event event{0};
-        event.events |= EPOLLOUT;
 
-        if(socketEventData_.writeQ.empty()) {
-            if ((socketEventData_.event.events & EPOLLOUT) == 0) {
-                event.events |= socketEventData_.event.events | EPOLLOUT;
-            }
-        } else {
-            event.events |= socketEventData_.event.events | EPOLLOUT;
-        }
-        socketEventData_.event.events |= event.events;
-        socketEventData_.event.data.ptr = &socketEventData_;
-        socketEventData_.writeQ.push(shared_from_this());
-        reactor_.registerEvent(socketEventData_);
-
-    }
 
     Reactor& reactor_;
     SocketEventData& socketEventData_;

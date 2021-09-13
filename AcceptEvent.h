@@ -11,7 +11,7 @@
 #include "StreamSocket.h"
 #include "Reactor.h"
 
-using AcceptHandler = std::function<void(std::error_code, StreamSocket)>;
+using AcceptHandler = std::function<void(std::error_code, std::shared_ptr<StreamSocket>)>;
 
 class AcceptEvent: public SocketEventHandler, std::enable_shared_from_this<AcceptEvent>{
 public:

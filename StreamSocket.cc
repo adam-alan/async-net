@@ -24,30 +24,15 @@ void StreamSocket::listen() {
 }
 
 void StreamSocket::read(Buffer buffer, ReadCompleteHandler handler) {
-    auto readEvent = std::make_shared<ReadFullEvent>(reactor_, socketEventData_, buffer, handler);
-    socketEventData_.event.events |= EPOLLIN;
-    socketEventData_.event.data.ptr = &socketEventData_;
-    socketEventData_.readQ.push(readEvent);
-    reactor_.registerEvent(socketEventData_);
+
+    socketEventData_.readQ.push(std::make_shared<ReadFullEvent>(reactor_, socketEventData_, buffer, handler));
+    reactor_.registerRead(socketEventData_);
 }
 
 
 void StreamSocket::write(Buffer buffer, WriteCompleteHandler handler) {
-    auto writeEvent = std::make_shared<WriteFullEvent>(reactor_, socketEventData_, buffer, handler);
-    epoll_event event{0};
-    event.events |= EPOLLOUT;
-
-    if(socketEventData_.writeQ.empty()) {
-        if ((socketEventData_.event.events & EPOLLOUT) == 0) {
-            event.events |= socketEventData_.event.events | EPOLLOUT;
-        }
-    } else {
-        event.events |= socketEventData_.event.events | EPOLLOUT;
-    }
-    socketEventData_.event.events |= event.events;
-    socketEventData_.event.data.ptr = &socketEventData_;
-    socketEventData_.writeQ.push(writeEvent);
-    reactor_.registerEvent(socketEventData_);
+    socketEventData_.writeQ.push(std::make_shared<WriteFullEvent>(reactor_, socketEventData_, buffer, handler));
+    reactor_.registerWrite(socketEventData_);
 }
 
 SocketEventData& StreamSocket::socketEventData() {

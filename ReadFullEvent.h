@@ -19,7 +19,7 @@ public:
 
 
     ReadFullEvent(Reactor &reactor,
-                  SocketEventData socketEventData,
+                  SocketEventData& socketEventData,
                   const Buffer &buffer,
                   ReadCompleteHandler handler)
     : reactor_(reactor)
@@ -51,16 +51,13 @@ public:
 
 private:
     void registerEvent() {
-        socketEventData_.event.events |= EPOLLIN;
-        socketEventData_.event.data.ptr = &socketEventData_;
+
         socketEventData_.readQ.push(shared_from_this());
-        reactor_.registerEvent(socketEventData_);
+        reactor_.registerWrite(socketEventData_);
     }
 
     Reactor& reactor_;
-
-
-    SocketEventData socketEventData_;
+    SocketEventData& socketEventData_;
     Buffer buffer_;
     ReadCompleteHandler handler_;
     size_t totalBytes_{0};
