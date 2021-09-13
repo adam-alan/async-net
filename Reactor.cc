@@ -5,14 +5,7 @@
 
 #include "Reactor.h"
 
-void Reactor::registerEvent(SocketEventData& socketEventData) {
-    auto ec = wrapper_->modify(socketEventData.fd, socketEventData.event);
 
-    if (ec) {
-        throw std::system_error(ec);
-    }
-
-}
 
 void Reactor::run() {
     while (!stoped_) {

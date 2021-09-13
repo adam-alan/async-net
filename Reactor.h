@@ -12,7 +12,6 @@
 class Reactor {
 public:
 
-    void registerEvent(SocketEventData& socketEventData);
 
     void registerRead(SocketEventData& socketEventData);
     void registerWrite(SocketEventData& socketEventData);
