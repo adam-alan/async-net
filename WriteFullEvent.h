@@ -18,7 +18,7 @@ using WriteCompleteHandler = std::function<void(std::error_code, size_t)>;
 class WriteFullEvent: public SocketEventHandler, public std::enable_shared_from_this<WriteFullEvent>{
 public:
     WriteFullEvent(Reactor &reactor,
-                   SocketEventData &socketEventData,
+                   SocketEventData& socketEventData,
                    const Buffer &buffer,
                    WriteCompleteHandler handler)
     : reactor_(reactor)
@@ -41,7 +41,7 @@ public:
 
         totalBytes_ += bytes;
         if (totalBytes_ == initSize_) {
-            handler_(std::error_code(), totalBytes_);
+            handler_({}, totalBytes_);
             return;
         }
         registerEvent();

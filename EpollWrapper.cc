@@ -16,19 +16,19 @@ int EpollWrapper::epollFd() const noexcept {
     return epfd_;
 }
 
-std::error_code EpollWrapper::add(int fd, epoll_event event) {
+std::error_code EpollWrapper::add(int fd, epoll_event event) const {
     return ::epoll_ctl(epfd_, EPOLL_CTL_ADD, fd, &event)
             ? std::error_code(errno, std::system_category())
             : std::error_code();
 }
 
-std::error_code EpollWrapper::del(int fd, epoll_event event) {
+std::error_code EpollWrapper::del(int fd, epoll_event event) const {
     return ::epoll_ctl(epfd_, EPOLL_CTL_DEL, fd, &event)
            ? std::error_code(errno, std::system_category())
            : std::error_code();
 }
 
-std::error_code EpollWrapper::modify(int fd, epoll_event event) {
+std::error_code EpollWrapper::modify(int fd, epoll_event event) const {
     return ::epoll_ctl(epfd_, EPOLL_CTL_MOD, fd, &event)
            ? std::error_code(errno, std::system_category())
            : std::error_code();

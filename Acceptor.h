@@ -12,10 +12,10 @@
 class Acceptor {
 
 public:
-    Acceptor(Reactor reactor, short port);
+    Acceptor(Reactor& reactor, short port);
 
 
-    void accept(AcceptHandler handler);
+    void accept(const AcceptHandler& handler);
 
 private:
 

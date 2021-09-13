@@ -50,4 +50,8 @@ void StreamSocket::write(Buffer buffer, WriteCompleteHandler handler) {
     reactor_.registerEvent(socketEventData_);
 }
 
+SocketEventData& StreamSocket::socketEventData() {
+    return socketEventData_;
+}
+
 

@@ -13,9 +13,9 @@ public:
     EpollWrapper();
 
     int epollFd() const noexcept;
-    std::error_code add(int fd, epoll_event event);
-    std::error_code del(int fd, epoll_event event);
-    std::error_code modify(int fd, epoll_event event);
+    std::error_code add(int fd, epoll_event event) const;
+    std::error_code del(int fd, epoll_event event) const;
+    std::error_code modify(int fd, epoll_event event) const;
 private:
 
     int epfd_;

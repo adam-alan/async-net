@@ -15,12 +15,11 @@ using AcceptHandler = std::function<void(std::error_code, StreamSocket)>;
 
 class AcceptEvent: public SocketEventHandler, std::enable_shared_from_this<AcceptEvent>{
 public:
-
+    AcceptEvent(Reactor& reactor, SocketEventData socketEventData, AcceptHandler acceptHandler);
     void handle() override;
-
 private:
     Reactor& reactor_;
-    SocketEventData& socketEventData_;
+    SocketEventData socketEventData_;
     AcceptHandler handler_;
 
 };

@@ -7,6 +7,12 @@
 
 
 
+AcceptEvent::AcceptEvent(Reactor &reactor, SocketEventData socketEventData, AcceptHandler acceptHandler)
+:reactor_(reactor)
+, socketEventData_(socketEventData)
+, handler_(acceptHandler){
+
+}
 
 
 
@@ -14,15 +20,14 @@
 
 
 void AcceptEvent::handle() {
+
     int newSock = ::accept4(socketEventData_.fd, nullptr, nullptr, SOCK_CLOEXEC | SOCK_NONBLOCK);
+
     if (newSock < 0) {
-        StreamSocket streamSocket(reactor_, newSock);
-        handler_(std::error_code{errno, std::system_category()}, streamSocket);
+        handler_(std::error_code{errno, std::system_category()}, {reactor_, newSock});
         return;
     }
 
-    StreamSocket streamSocket(reactor_, newSock);
-    handler_({}, streamSocket);
-
+    handler_({}, {reactor_, newSock});
 
 }

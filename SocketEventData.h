@@ -15,9 +15,9 @@
 struct SocketEventData {
     int fd{-1};
     epoll_event event{};
-    std::queue<std::shared_ptr<SocketEventHandler>> readQ;
-    std::queue<std::shared_ptr<SocketEventHandler>> writeQ;
-    std::queue<std::shared_ptr<SocketEventHandler>> connectQ;
+    std::queue<std::shared_ptr<SocketEventHandler>> readQ{};
+    std::queue<std::shared_ptr<SocketEventHandler>> writeQ{};
+    std::queue<std::shared_ptr<SocketEventHandler>> connectQ{};
 };
 
 #endif //ASYNC_NET__SOCKETEVENTDATA_H_

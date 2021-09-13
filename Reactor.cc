@@ -1,10 +1,11 @@
 //
 // Created by loadstar on 2021/9/11.
 //
+#include <iostream>
 
 #include "Reactor.h"
 
-void Reactor::registerEvent(SocketEventData socketEventData) {
+void Reactor::registerEvent(SocketEventData& socketEventData) {
     auto ec = wrapper_->modify(socketEventData.fd, socketEventData.event);
 
     if (ec) {
@@ -20,34 +21,69 @@ void Reactor::run() {
 
         auto nfs = ::epoll_wait(wrapper_->epollFd(), events, 100, 100);
         for (int i = 0;i < nfs; ++i) {
-            SocketEventData* data = (SocketEventData*)events[i].data.ptr;
+
+            auto data = (SocketEventData*)events[i].data.ptr;
+
+            if (events[i].events == EPOLLOUT ) {
+                if (!data->connectQ.empty()) {
+                    auto front = data->connectQ.front();
+                    front->handle();
+                    data->connectQ.pop();
+                }
+
+                if (!data->writeQ.empty()) {
+                    auto front = data->writeQ.front();
+                    front->handle();
+                    data->writeQ.pop();
+                }
+
+            }
+
+            if (events[i].events == EPOLLIN) {
+
+                if (!data->readQ.empty()) {
+
+                    data->readQ.front()->handle();
 //
-//            if (events[i].events == EPOLLOUT ) {
-//                if (data->connectQ.size()) {
-//                    auto front = data->connectQ.front();
-//                    front->handle();
-//                    data->connectQ.pop();
-//                }
-//
-//                if (data->writeQ.size()) {
-//                    auto front = data->writeQ.front();
-//                    front->handle();
-//                    data->writeQ.pop();
-//                }
-//
-//            }
-//
-//            if (events[i].events == EPOLLIN) {
-//                if (data->readQ.size()) {
-//                    auto front = data->readQ.front();
-//                    front->handle();
-//                    data->readQ.pop();
-//                }
-//            }
+                    data->readQ.pop();
+                }
+            }
         }
     }
 }
 
+
 void Reactor::stop() {
     stoped_ = true;
+}
+
+void Reactor::registerRead(SocketEventData& socketEventData) {
+    ::epoll_event ev{};
+    ev.events = EPOLLIN;
+    ev.data.ptr = &socketEventData;
+    auto data = (SocketEventData*)ev.data.ptr;
+
+    std::cout << data->fd << std::endl;
+    std::cout << data->readQ.size() << std::endl;
+    std::cout << data->writeQ.size() << std::endl;
+    std::cout << data->connectQ.size() << std::endl;
+    if (wrapper_->modify(socketEventData.fd, ev)) {
+        throw std::system_error{errno, std::system_category()};
+    }
+}
+
+void Reactor::registerWrite(SocketEventData& socketEventData) {
+    ::epoll_event ev{};
+    ev.events = EPOLLOUT;
+    ev.data.ptr = &socketEventData;
+
+    if (wrapper_->modify(socketEventData.fd, ev)) {
+        throw std::system_error{errno, std::system_category()};
+    }
+}
+
+void Reactor::add(SocketEventData& socketEventData) {
+    if (wrapper_->add(socketEventData.fd, {})) {
+        throw std::system_error{errno, std::system_category()};
+    }
 }

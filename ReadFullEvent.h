@@ -19,7 +19,7 @@ public:
 
 
     ReadFullEvent(Reactor &reactor,
-                  SocketEventData& socketEventData,
+                  SocketEventData socketEventData,
                   const Buffer &buffer,
                   ReadCompleteHandler handler)
     : reactor_(reactor)
@@ -36,13 +36,13 @@ public:
         ssize_t bytes = ::read(socketEventData_.fd, buffer_.data(), buffer_.size());
         // 处理异常
         if (bytes <= 0) {
-            handler_(std::error_code(errno, std::system_category()), totalBytes_);
+            handler_({errno, std::system_category()}, totalBytes_);
             return;
         }
 
         totalBytes_ += bytes;
         if (totalBytes_ == initSize_) {
-            handler_(std::error_code(), totalBytes_);
+            handler_({}, totalBytes_);
             return;
         }
 
@@ -60,7 +60,7 @@ private:
     Reactor& reactor_;
 
 
-    SocketEventData& socketEventData_;
+    SocketEventData socketEventData_;
     Buffer buffer_;
     ReadCompleteHandler handler_;
     size_t totalBytes_{0};
