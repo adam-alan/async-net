@@ -16,6 +16,7 @@ int main() {
         char str[] = "hello";
 
         std::cout << "accept" << std::endl;
+        std::cout << &streamSocket->socketEventData().writeQ << std::endl;
         streamSocket->write(buffer(str), [](std::error_code ec, size_t bytes){
             if(!ec) {
                 std::cout << "write success" << std::endl;

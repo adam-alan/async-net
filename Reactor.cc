@@ -27,11 +27,14 @@ void Reactor::run() {
 //                }
 
                 if (!data->writeQ.empty()) {
+                    std::cout << data << std::endl;
+
                     std::cout << "write register" << std::endl;
                     std::cout << data->writeQ.size() << std::endl;
-                    std::cout << data->connectQ.size() << std::endl;
                     std::cout << data->readQ.size() << std::endl;
-                    data->writeQ.front()->handle();
+                    if (data->writeQ.front() == nullptr) {
+                        std::cout << "null" << std::endl;
+                    }
 
                     data->writeQ.pop();
                 }
@@ -70,6 +73,7 @@ void Reactor::registerWrite(SocketEventData& socketEventData) {
     ::epoll_event ev{};
     ev.events = EPOLLOUT;
     ev.data.ptr = &socketEventData;
+    std::cout << &socketEventData << std::endl;
 
     if (wrapper_->modify(socketEventData.fd, ev)) {
         throw std::system_error{errno, std::system_category()};

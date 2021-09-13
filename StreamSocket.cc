@@ -32,6 +32,7 @@ void StreamSocket::read(Buffer buffer, ReadCompleteHandler handler) {
 
 void StreamSocket::write(Buffer buffer, WriteCompleteHandler handler) {
     socketEventData_.writeQ.push(std::make_shared<WriteFullEvent>(reactor_, socketEventData_, buffer, handler));
+    std::cout << &socketEventData_ << std::endl;
     reactor_.registerWrite(socketEventData_);
 }
 
