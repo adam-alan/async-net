@@ -22,25 +22,14 @@ using ConnectHandler = std::function<void(std::error_code)>;
 class StreamSocket {
 public:
 
-    explicit StreamSocket(Reactor& reactor)
-    : reactor_(reactor)
-    , socketEventData_{}{
-        socketEventData_.fd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-        if (socketEventData_.fd < 0) {
-            throw std::system_error(errno, std::system_category());
-        }
-        makeNoBlock(socketEventData_.fd);
-        reactor_.add(socketEventData_);
+    explicit StreamSocket(Reactor& reactor);
 
-    }
+    StreamSocket(Reactor& reactor, int fd);
 
+    StreamSocket(StreamSocket&& streamSocket) noexcept ;
 
-    StreamSocket(Reactor& reactor, int fd)
-        : reactor_(reactor){
-        socketEventData_.fd = fd;
-        reactor_.add(socketEventData_);
+    StreamSocket& operator=(StreamSocket&& streamSocket) noexcept;
 
-    }
     void bind(short port) const;
 
     void listen();
@@ -48,14 +37,15 @@ public:
     void read(Buffer buffer, ReadCompleteHandler handler);
 
     void write(Buffer buffer, WriteCompleteHandler handler);
-    SocketEventData& socketEventData();
-//    void accept()
 
+    SocketEventData& socketEventData();
+
+    ~StreamSocket() {
+        std::cout << "destroyed" << std::endl;
+    }
 private:
 
     Reactor& reactor_;
-
-
     SocketEventData socketEventData_;
 
 };

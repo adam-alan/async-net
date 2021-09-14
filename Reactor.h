@@ -4,7 +4,6 @@
 
 #ifndef ASYNC_NET__REACTOR_H_
 #define ASYNC_NET__REACTOR_H_
-
 #include "EpollWrapper.h"
 #include "SocketEventData.h"
 

@@ -7,7 +7,7 @@
 
 #include "StreamSocket.h"
 #include "AcceptEvent.h"
-
+#include <vector>
 
 class Acceptor {
 
@@ -21,6 +21,7 @@ private:
 
     Reactor& reactor_;
     StreamSocket streamSocket_;
+
 
 };
 

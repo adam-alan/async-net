@@ -6,6 +6,23 @@
 
 #include "StreamSocket.h"
 
+StreamSocket::StreamSocket(Reactor& reactor)
+: reactor_(reactor)
+, socketEventData_{}{
+    socketEventData_.fd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (socketEventData_.fd < 0) {
+        throw std::system_error(errno, std::system_category());
+    }
+    makeNoBlock(socketEventData_.fd);
+    reactor_.add(socketEventData_);
+
+}
+
+StreamSocket::StreamSocket(Reactor& reactor, int fd)
+: reactor_(reactor){
+    socketEventData_.fd = fd;
+    reactor_.add(socketEventData_);
+}
 void StreamSocket::bind(short port) const {
     ::sockaddr_in addr{};
     addr.sin_family = AF_INET;
@@ -32,12 +49,22 @@ void StreamSocket::read(Buffer buffer, ReadCompleteHandler handler) {
 
 void StreamSocket::write(Buffer buffer, WriteCompleteHandler handler) {
     socketEventData_.writeQ.push(std::make_shared<WriteFullEvent>(reactor_, socketEventData_, buffer, handler));
-    std::cout << &socketEventData_ << std::endl;
     reactor_.registerWrite(socketEventData_);
 }
 
 SocketEventData& StreamSocket::socketEventData() {
     return socketEventData_;
+}
+
+StreamSocket::StreamSocket(StreamSocket &&streamSocket) noexcept
+:reactor_(streamSocket.reactor_)
+, socketEventData_(std::move(streamSocket.socketEventData_))
+{
+
+}
+StreamSocket &StreamSocket::operator=(StreamSocket &&streamSocket)  noexcept {
+//    return <#initializer#>;
+    return *this;
 }
 
 

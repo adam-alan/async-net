@@ -31,7 +31,6 @@ public:
     }
 
     void handle() override {
-        std::cout << "WriteFullEvent" << std::endl;
         ssize_t bytes = ::write(socketEventData_.fd, buffer_.data(), buffer_.size());
         // 处理异常
         if (bytes <= 0) {
