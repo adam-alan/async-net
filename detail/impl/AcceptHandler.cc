@@ -2,12 +2,12 @@
 // Created by loadstar on 2021/9/13.
 //
 
-#include "../AcceptEvent.h"
+#include "../AcceptHandler.h"
 
 
 
 
-AcceptEvent::AcceptEvent(Reactor &reactor, NetEventData socketEventData, AcceptHandler acceptHandler)
+AcceptHandler::AcceptHandler(Reactor &reactor, NetEventData socketEventData, AcceptHandler acceptHandler)
 :reactor_(reactor)
 , socketEventData_(socketEventData)
 , handler_(acceptHandler){
@@ -19,7 +19,7 @@ AcceptEvent::AcceptEvent(Reactor &reactor, NetEventData socketEventData, AcceptH
 
 
 
-void AcceptEvent::handle() {
+void AcceptHandler::handle() {
 
     int newSock = ::accept4(socketEventData_.fd, nullptr, nullptr, SOCK_CLOEXEC | SOCK_NONBLOCK);
 

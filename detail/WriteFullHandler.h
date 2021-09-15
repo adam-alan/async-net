@@ -15,12 +15,12 @@
 
 using WriteCompleteHandler = std::function<void(std::error_code, size_t)>;
 
-class WriteFull: public NetEventHandler, public std::enable_shared_from_this<WriteFull>{
+class WriteFullHandler: public NetEventHandler, public std::enable_shared_from_this<WriteFullHandler>{
 public:
-    WriteFull(Reactor &reactor,
-              NetEventData& socketEventData,
-              const Buffer &buffer,
-              WriteCompleteHandler handler)
+    WriteFullHandler(Reactor &reactor,
+                     NetEventData& socketEventData,
+                     const Buffer &buffer,
+                     WriteCompleteHandler handler)
     : reactor_(reactor)
     , socketEventData_(socketEventData)
     , buffer_(buffer)

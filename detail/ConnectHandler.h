@@ -8,7 +8,7 @@
 #include "NetEventHandler.h"
 #include <memory>
 
-class ConnectEvent: public NetEventHandler, std::enable_shared_from_this<ConnectEvent>{
+class ConnectHandler: public NetEventHandler, std::enable_shared_from_this<ConnectHandler>{
 
 };
 

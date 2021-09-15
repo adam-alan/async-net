@@ -42,13 +42,13 @@ void StreamSocket::listen() {
 
 void StreamSocket::read(Buffer buffer, ReadCompleteHandler handler) {
 
-    socketEventData_.readQ.push(std::make_shared<ReadFull>(reactor_, socketEventData_, buffer, handler));
+    socketEventData_.readQ.push(std::make_shared<ReadFullHandler>(reactor_, socketEventData_, buffer, handler));
     reactor_.registerRead(socketEventData_);
 }
 
 
 void StreamSocket::write(Buffer buffer, WriteCompleteHandler handler) {
-    socketEventData_.writeQ.push(std::make_shared<WriteFull>(reactor_, socketEventData_, buffer, handler));
+    socketEventData_.writeQ.push(std::make_shared<WriteFullHandler>(reactor_, socketEventData_, buffer, handler));
     reactor_.registerWrite(socketEventData_);
 }
 

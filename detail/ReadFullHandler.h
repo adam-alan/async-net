@@ -14,14 +14,14 @@
 
 using ReadCompleteHandler = std::function<void(std::error_code, size_t)>;
 
-class ReadFull: public NetEventHandler, public std::enable_shared_from_this<ReadFull> {
+class ReadFullHandler: public NetEventHandler, public std::enable_shared_from_this<ReadFullHandler> {
 public:
 
 
-    ReadFull(Reactor &reactor,
-             NetEventData& socketEventData,
-             const Buffer &buffer,
-             ReadCompleteHandler handler)
+    ReadFullHandler(Reactor &reactor,
+                    NetEventData& socketEventData,
+                    const Buffer &buffer,
+                    ReadCompleteHandler handler)
     : reactor_(reactor)
     , socketEventData_(socketEventData)
     , buffer_(buffer)
@@ -32,7 +32,7 @@ public:
     }
 
     void handle() override {
-        std::cout << "ReadFull" << std::endl;
+        std::cout << "ReadFullHandler" << std::endl;
         ssize_t bytes = ::read(socketEventData_.fd, buffer_.data(), buffer_.size());
         // 处理异常
         if (bytes <= 0) {

@@ -13,9 +13,9 @@
 
 using AcceptHandler = std::function<void(std::error_code, std::shared_ptr<StreamSocket>)>;
 
-class AcceptEvent: public NetEventHandler, std::enable_shared_from_this<AcceptEvent>{
+class AcceptHandler: public NetEventHandler, std::enable_shared_from_this<AcceptHandler>{
 public:
-    AcceptEvent(Reactor& reactor, NetEventData socketEventData, AcceptHandler acceptHandler);
+    AcceptHandler(Reactor& reactor, NetEventData socketEventData, AcceptHandler acceptHandler);
     void handle() override;
 private:
     Reactor& reactor_;

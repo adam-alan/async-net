@@ -13,7 +13,7 @@ Acceptor::Acceptor(Reactor& reactor, short port)
 
 void Acceptor::accept(const AcceptHandler& handler) {
 
-    streamSocket_.socketEventData().readQ.push(std::make_shared<AcceptEvent>(reactor_, streamSocket_.socketEventData(), handler));
+    streamSocket_.socketEventData().readQ.push(std::make_shared<AcceptHandler>(reactor_, streamSocket_.socketEventData(), handler));
     reactor_.registerRead(streamSocket_.socketEventData());
 
 }

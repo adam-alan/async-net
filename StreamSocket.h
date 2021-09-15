@@ -10,8 +10,8 @@
 #include "Buffer.h"
 #include "detail/NetEventData.h"
 #include "Reactor.h"
-#include "detail/ReadFull.h"
-#include "detail/WriteFull.h"
+#include "detail/ReadFullHandler.h"
+#include "detail/WriteFullHandler.h"
 #include "FdUtils.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
