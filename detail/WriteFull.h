@@ -10,17 +10,17 @@
 #include <functional>
 #include <sys/epoll.h>
 
-#include "Buffer.h"
-#include "Reactor.h"
+#include "../Buffer.h"
+#include "../Reactor.h"
 
 using WriteCompleteHandler = std::function<void(std::error_code, size_t)>;
 
-class WriteFullEvent: public SocketEventHandler, public std::enable_shared_from_this<WriteFullEvent>{
+class WriteFull: public NetEventHandler, public std::enable_shared_from_this<WriteFull>{
 public:
-    WriteFullEvent(Reactor &reactor,
-                   SocketEventData& socketEventData,
-                   const Buffer &buffer,
-                   WriteCompleteHandler handler)
+    WriteFull(Reactor &reactor,
+              NetEventData& socketEventData,
+              const Buffer &buffer,
+              WriteCompleteHandler handler)
     : reactor_(reactor)
     , socketEventData_(socketEventData)
     , buffer_(buffer)
@@ -34,7 +34,7 @@ public:
         ssize_t bytes = ::write(socketEventData_.fd, buffer_.data(), buffer_.size());
         // 处理异常
         if (bytes <= 0) {
-            handler_(std::error_code(errno, std::system_category()), totalBytes_);
+            handler_({errno, std::system_category()}, totalBytes_);
             return;
         }
 
@@ -52,7 +52,7 @@ private:
 
 
     Reactor& reactor_;
-    SocketEventData& socketEventData_;
+    NetEventData& socketEventData_;
     Buffer buffer_;
     WriteCompleteHandler handler_;
     size_t totalBytes_{0};

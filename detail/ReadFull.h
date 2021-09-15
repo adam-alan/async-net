@@ -9,19 +9,19 @@
 #include <sys/epoll.h>
 #include <functional>
 
-#include "Buffer.h"
-#include "Reactor.h"
+#include "../Buffer.h"
+#include "../Reactor.h"
 
 using ReadCompleteHandler = std::function<void(std::error_code, size_t)>;
 
-class ReadFullEvent: public SocketEventHandler, public std::enable_shared_from_this<ReadFullEvent> {
+class ReadFull: public NetEventHandler, public std::enable_shared_from_this<ReadFull> {
 public:
 
 
-    ReadFullEvent(Reactor &reactor,
-                  SocketEventData& socketEventData,
-                  const Buffer &buffer,
-                  ReadCompleteHandler handler)
+    ReadFull(Reactor &reactor,
+             NetEventData& socketEventData,
+             const Buffer &buffer,
+             ReadCompleteHandler handler)
     : reactor_(reactor)
     , socketEventData_(socketEventData)
     , buffer_(buffer)
@@ -32,7 +32,7 @@ public:
     }
 
     void handle() override {
-        std::cout << "ReadFullEvent" << std::endl;
+        std::cout << "ReadFull" << std::endl;
         ssize_t bytes = ::read(socketEventData_.fd, buffer_.data(), buffer_.size());
         // 处理异常
         if (bytes <= 0) {
@@ -57,7 +57,7 @@ private:
     }
 
     Reactor& reactor_;
-    SocketEventData& socketEventData_;
+    NetEventData& socketEventData_;
     Buffer buffer_;
     ReadCompleteHandler handler_;
     size_t totalBytes_{0};

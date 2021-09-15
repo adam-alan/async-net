@@ -7,19 +7,19 @@
 
 #include <memory>
 #include <functional>
-#include "SocketEventHandler.h"
-#include "StreamSocket.h"
-#include "Reactor.h"
+#include "NetEventHandler.h"
+#include "../StreamSocket.h"
+#include "../Reactor.h"
 
 using AcceptHandler = std::function<void(std::error_code, std::shared_ptr<StreamSocket>)>;
 
-class AcceptEvent: public SocketEventHandler, std::enable_shared_from_this<AcceptEvent>{
+class AcceptEvent: public NetEventHandler, std::enable_shared_from_this<AcceptEvent>{
 public:
-    AcceptEvent(Reactor& reactor, SocketEventData socketEventData, AcceptHandler acceptHandler);
+    AcceptEvent(Reactor& reactor, NetEventData socketEventData, AcceptHandler acceptHandler);
     void handle() override;
 private:
     Reactor& reactor_;
-    SocketEventData socketEventData_;
+    NetEventData socketEventData_;
     AcceptHandler handler_;
 
 };

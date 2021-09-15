@@ -30,7 +30,7 @@ public:
         return end_ - begin_;
     }
 
-    void moveStep(int step) {
+    void moveStep(ssize_t step) {
         begin_ += step;
     }
 
@@ -46,12 +46,12 @@ Buffer buffer(std::string buf);
 
 template<size_t N>
 Buffer buffer(std::array<char, N> buf) {
-    return Buffer{buf.data(), buf.data() + N};
+    return {buf.data(), buf.data() + N};
 }
 
 template<size_t N>
 Buffer buffer(char (&buf)[N] ) {
-    return Buffer{buf, buf + N};
+    return {buf, buf + N};
 }
 
 #endif //ASYNC_NET__BUFFER_H_

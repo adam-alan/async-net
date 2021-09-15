@@ -8,11 +8,11 @@
 #include <memory>
 #include <functional>
 #include "Buffer.h"
-#include "SocketEventData.h"
+#include "detail/NetEventData.h"
 #include "Reactor.h"
-#include "ReadFullEvent.h"
-#include "WriteFullEvent.h"
-#include "SocketUtils.h"
+#include "detail/ReadFull.h"
+#include "detail/WriteFull.h"
+#include "FdUtils.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
 using ConnectHandler = std::function<void(std::error_code)>;
@@ -38,7 +38,7 @@ public:
 
     void write(Buffer buffer, WriteCompleteHandler handler);
 
-    SocketEventData& socketEventData();
+    NetEventData& socketEventData();
 
     ~StreamSocket() {
         std::cout << "destroyed" << std::endl;
@@ -46,7 +46,7 @@ public:
 private:
 
     Reactor& reactor_;
-    SocketEventData socketEventData_;
+    NetEventData socketEventData_;
 
 };
 

@@ -3,19 +3,19 @@
 //
 #include <iostream>
 
-#include "Reactor.h"
+#include "../Reactor.h"
 
 
 
 void Reactor::run() {
-    while (!stoped_) {
+    while (!isStop_) {
         epoll_event events[100];
 
 
         auto nfs = ::epoll_wait(wrapper_->epollFd(), events, 100, 100);
         for (int i = 0;i < nfs; ++i) {
 
-            auto data = (SocketEventData*)events[i].data.ptr;
+            auto data = (NetEventData*)events[i].data.ptr;
 
             if (events[i].events == EPOLLOUT ) {
 //                if (!data->connectQ.empty()) {
@@ -46,10 +46,10 @@ void Reactor::run() {
 
 
 void Reactor::stop() {
-    stoped_ = true;
+    isStop_ = true;
 }
 
-void Reactor::registerRead(SocketEventData& socketEventData) {
+void Reactor::registerRead(NetEventData& socketEventData) {
     ::epoll_event ev{};
     ev.events = EPOLLIN;
     ev.data.ptr = &socketEventData;
@@ -59,7 +59,7 @@ void Reactor::registerRead(SocketEventData& socketEventData) {
     }
 }
 
-void Reactor::registerWrite(SocketEventData& socketEventData) {
+void Reactor::registerWrite(NetEventData& socketEventData) {
     ::epoll_event ev{};
     ev.events = EPOLLOUT;
     ev.data.ptr = &socketEventData;
@@ -69,7 +69,7 @@ void Reactor::registerWrite(SocketEventData& socketEventData) {
     }
 }
 
-void Reactor::add(SocketEventData& socketEventData) {
+void Reactor::add(NetEventData& socketEventData) {
     if (wrapper_->add(socketEventData.fd, {})) {
         throw std::system_error{errno, std::system_category()};
     }

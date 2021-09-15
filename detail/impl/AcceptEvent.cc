@@ -2,12 +2,12 @@
 // Created by loadstar on 2021/9/13.
 //
 
-#include "AcceptEvent.h"
+#include "../AcceptEvent.h"
 
 
 
 
-AcceptEvent::AcceptEvent(Reactor &reactor, SocketEventData socketEventData, AcceptHandler acceptHandler)
+AcceptEvent::AcceptEvent(Reactor &reactor, NetEventData socketEventData, AcceptHandler acceptHandler)
 :reactor_(reactor)
 , socketEventData_(socketEventData)
 , handler_(acceptHandler){

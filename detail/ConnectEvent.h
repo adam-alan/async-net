@@ -5,10 +5,10 @@
 #ifndef ASYNC_NET__CONNECTEVENT_H_
 #define ASYNC_NET__CONNECTEVENT_H_
 
-#include "SocketEventHandler.h"
+#include "NetEventHandler.h"
 #include <memory>
 
-class ConnectEvent: public SocketEventHandler, std::enable_shared_from_this<ConnectEvent>{
+class ConnectEvent: public NetEventHandler, std::enable_shared_from_this<ConnectEvent>{
 
 };
 

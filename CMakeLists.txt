@@ -3,4 +3,4 @@ project(async_net)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(async_net main.cpp StreamSocket.cc StreamSocket.h SocketUtils.h AcceptEvent.h Acceptor.cc Acceptor.h ConnectEvent.cc ConnectEvent.h Buffer.cc SocketUtils.cc Reactor.h Reactor.cc EpollWrapper.h EpollWrapper.cc AcceptEvent.cc)
+add_executable(async_net main.cpp impl/StreamSocket.cc StreamSocket.h FdUtils.h detail/AcceptEvent.h impl/Acceptor.cc Acceptor.h detail/impl/ConnectEvent.cc detail/ConnectEvent.h impl/Buffer.cc impl/FdUtils.cc Reactor.h impl/Reactor.cc detail/EpollWrapper.h detail/impl/EpollWrapper.cc detail/impl/AcceptEvent.cc)

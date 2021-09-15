@@ -6,7 +6,7 @@
 #define ASYNC_NET__ACCEPTOR_H_
 
 #include "StreamSocket.h"
-#include "AcceptEvent.h"
+#include "detail/AcceptEvent.h"
 #include <vector>
 
 class Acceptor {

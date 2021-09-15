@@ -4,7 +4,7 @@
 
 #include <netinet/in.h>
 
-#include "StreamSocket.h"
+#include "../StreamSocket.h"
 
 StreamSocket::StreamSocket(Reactor& reactor)
 : reactor_(reactor)
@@ -42,17 +42,17 @@ void StreamSocket::listen() {
 
 void StreamSocket::read(Buffer buffer, ReadCompleteHandler handler) {
 
-    socketEventData_.readQ.push(std::make_shared<ReadFullEvent>(reactor_, socketEventData_, buffer, handler));
+    socketEventData_.readQ.push(std::make_shared<ReadFull>(reactor_, socketEventData_, buffer, handler));
     reactor_.registerRead(socketEventData_);
 }
 
 
 void StreamSocket::write(Buffer buffer, WriteCompleteHandler handler) {
-    socketEventData_.writeQ.push(std::make_shared<WriteFullEvent>(reactor_, socketEventData_, buffer, handler));
+    socketEventData_.writeQ.push(std::make_shared<WriteFull>(reactor_, socketEventData_, buffer, handler));
     reactor_.registerWrite(socketEventData_);
 }
 
-SocketEventData& StreamSocket::socketEventData() {
+NetEventData& StreamSocket::socketEventData() {
     return socketEventData_;
 }
 
