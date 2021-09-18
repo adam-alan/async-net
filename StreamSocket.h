@@ -26,10 +26,7 @@ public:
 
     StreamSocket(Reactor& reactor, int fd);
 
-    StreamSocket(StreamSocket&& streamSocket) noexcept ;
-
-    StreamSocket& operator=(StreamSocket&& streamSocket) noexcept;
-
+    int fd() const;
     void bind(short port) const;
 
     void listen();
@@ -38,16 +35,10 @@ public:
 
     void write(Buffer buffer, WriteCompleteHandler handler);
 
-    NetEventData& socketEventData();
-
-    ~StreamSocket() {
-        std::cout << "destroyed" << std::endl;
-    }
 private:
 
     Reactor& reactor_;
-    NetEventData socketEventData_;
-
+    int fd_;
 };
 
 

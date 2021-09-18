@@ -13,7 +13,7 @@
 
 
 struct NetEventData {
-    int fd{-1};
+    uint32_t events{};
     std::queue<std::shared_ptr<NetEventHandler>> readQ{};
     std::queue<std::shared_ptr<NetEventHandler>> writeQ{};
 };

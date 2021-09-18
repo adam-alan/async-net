@@ -11,17 +11,15 @@
 #include "../StreamSocket.h"
 #include "../Reactor.h"
 
-using AcceptHandler = std::function<void(std::error_code, std::shared_ptr<StreamSocket>)>;
+using AcceptCompleteHandler = std::function<void(std::error_code, StreamSocket)>;
 
 class AcceptHandler: public NetEventHandler, std::enable_shared_from_this<AcceptHandler>{
 public:
-    AcceptHandler(Reactor& reactor, NetEventData socketEventData, AcceptHandler acceptHandler);
+    AcceptHandler(int fd, Reactor &reactor, AcceptCompleteHandler handler);
     void handle() override;
 private:
     Reactor& reactor_;
-    NetEventData socketEventData_;
-    AcceptHandler handler_;
-
+    AcceptCompleteHandler handler_;
 };
 
 #endif //ASYNC_NET__ACCEPTEVENT_H_

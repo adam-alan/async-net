@@ -8,6 +8,7 @@
 #include <iostream>
 #include <memory>
 #include <functional>
+#include <utility>
 #include <sys/epoll.h>
 
 #include "../Buffer.h"
@@ -17,21 +18,23 @@ using WriteCompleteHandler = std::function<void(std::error_code, size_t)>;
 
 class WriteFullHandler: public NetEventHandler, public std::enable_shared_from_this<WriteFullHandler>{
 public:
-    WriteFullHandler(Reactor &reactor,
-                     NetEventData& socketEventData,
-                     const Buffer &buffer,
-                     WriteCompleteHandler handler)
-    : reactor_(reactor)
-    , socketEventData_(socketEventData)
+    WriteFullHandler(
+        int fd
+        , Reactor &reactor
+        , const Buffer &buffer
+        , ReadCompleteHandler handler
+
+    ): NetEventHandler(fd)
+    , reactor_(reactor)
     , buffer_(buffer)
     , handler_(std::move(handler))
-    , totalBytes_{0}
-    , initSize_{buffer_.size()}{
+    , totalBytes_(0)
+    , initSize_(buffer_.size()) {
 
     }
 
     void handle() override {
-        ssize_t bytes = ::write(socketEventData_.fd, buffer_.data(), buffer_.size());
+        ssize_t bytes = ::write(fd(), buffer_.data(), buffer_.size());
         // 处理异常
         if (bytes <= 0) {
             handler_({errno, std::system_category()}, totalBytes_);
@@ -44,15 +47,14 @@ public:
             return;
         }
         buffer_.moveStep(bytes);
-        socketEventData_.writeQ.push(shared_from_this());
-        reactor_.registerWrite(socketEventData_);
+//        netEventData_->writeQ.push(shared_from_this());
+//        reactor_.registerWrite(netEventData_);
+        reactor_.registerRead(shared_from_this());
     }
 
 private:
 
-
     Reactor& reactor_;
-    NetEventData& socketEventData_;
     Buffer buffer_;
     WriteCompleteHandler handler_;
     size_t totalBytes_{0};

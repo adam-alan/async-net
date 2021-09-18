@@ -15,7 +15,7 @@ public:
     Acceptor(Reactor& reactor, short port);
 
 
-    void accept(const AcceptHandler& handler);
+    void accept(const AcceptCompleteHandler & handler);
 
 private:
 

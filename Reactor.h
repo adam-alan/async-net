@@ -6,22 +6,21 @@
 #define ASYNC_NET__REACTOR_H_
 #include "detail/EpollWrapper.h"
 #include "detail/NetEventData.h"
-
+#include <unordered_map>
 
 class Reactor {
 public:
 
-    void registerRead(NetEventData& socketEventData);
-    void registerWrite(NetEventData& socketEventData);
-    void add(NetEventData& socketEventData);
+    void add(int fd);
+    void registerRead(std::shared_ptr<NetEventHandler> handler);
+    void registerWrite(std::shared_ptr<NetEventHandler> handler);
 
     void run();
-
     void stop();
 private:
     bool isStop_{false};
     std::unique_ptr<EpollWrapper> wrapper_ = std::make_unique<EpollWrapper>();
-
+    std::unordered_map<int, std::shared_ptr<NetEventData>> fdToEventData{};
 };
 
 #endif //ASYNC_NET__REACTOR_H_

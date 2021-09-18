@@ -7,64 +7,51 @@
 #include "../StreamSocket.h"
 
 StreamSocket::StreamSocket(Reactor& reactor)
-: reactor_(reactor)
-, socketEventData_{}{
-    socketEventData_.fd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (socketEventData_.fd < 0) {
+: reactor_(reactor) {
+    fd_ = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (fd_ < 0) {
         throw std::system_error(errno, std::system_category());
     }
-    makeNoBlock(socketEventData_.fd);
-    reactor_.add(socketEventData_);
+    makeNoBlock(fd_);
+    reactor_.add(fd_);
 
 }
 
 StreamSocket::StreamSocket(Reactor& reactor, int fd)
 : reactor_(reactor){
-    socketEventData_.fd = fd;
-    reactor_.add(socketEventData_);
+    fd_ = fd;
+    reactor_.add(fd_);
 }
+
 void StreamSocket::bind(short port) const {
     ::sockaddr_in addr{};
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = INADDR_ANY;
 
-    if (::bind(socketEventData_.fd, (sockaddr*)(&addr), sizeof(addr)) < 0) {
+    if (::bind(fd_, (sockaddr*)(&addr), sizeof(addr)) < 0) {
         throw std::system_error(errno, std::system_category());
     }
 }
 
 void StreamSocket::listen() {
-    if (::listen(socketEventData_.fd, 1024) < 0) {
+    if (::listen(fd_, 1024) < 0) {
         throw std::system_error(errno, std::system_category());
     }
 }
 
 void StreamSocket::read(Buffer buffer, ReadCompleteHandler handler) {
-
-    socketEventData_.readQ.push(std::make_shared<ReadFullHandler>(reactor_, socketEventData_, buffer, handler));
-    reactor_.registerRead(socketEventData_);
+    reactor_.registerRead(std::make_shared<ReadFullHandler>(fd_, reactor_, buffer, handler));
 }
 
 
 void StreamSocket::write(Buffer buffer, WriteCompleteHandler handler) {
-    socketEventData_.writeQ.push(std::make_shared<WriteFullHandler>(reactor_, socketEventData_, buffer, handler));
-    reactor_.registerWrite(socketEventData_);
+    reactor_.registerWrite(std::make_shared<WriteFullHandler>(fd_, reactor_, buffer, handler));
 }
 
-NetEventData& StreamSocket::socketEventData() {
-    return socketEventData_;
+int StreamSocket::fd() const {
+    return fd_;
 }
 
-StreamSocket::StreamSocket(StreamSocket &&streamSocket) noexcept
-:reactor_(streamSocket.reactor_)
-, socketEventData_(std::move(streamSocket.socketEventData_))
-{
-
-}
-StreamSocket &StreamSocket::operator=(StreamSocket &&streamSocket)  noexcept {
-//    return <#initializer#>;
-    return *this;
-}
 
 
