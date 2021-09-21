@@ -8,14 +8,17 @@
 #include <memory>
 #include <queue>
 #include <sys/epoll.h>
-#include "NetEventHandler.h"
+#include <functional>
+//#include "NetEventHandler.h"
 
 
 
 struct NetEventData {
     uint32_t events{};
-    std::queue<std::shared_ptr<NetEventHandler>> readQ{};
-    std::queue<std::shared_ptr<NetEventHandler>> writeQ{};
+//    std::queue<std::shared_ptr<NetEventHandler>> readQ{};
+//    std::queue<std::shared_ptr<NetEventHandler>> writeQ{};
+    std::queue<std::function<void()>> readQueue{};
+    std::queue<std::function<void()>> writeQueue{};
 };
 
 #endif //ASYNC_NET__NETEVENTDATA_H_

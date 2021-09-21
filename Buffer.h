@@ -5,7 +5,7 @@
 #ifndef ASYNC_NET__BUFFER_H_
 #define ASYNC_NET__BUFFER_H_
 
-
+#include <iostream>
 #include <vector>
 #include <string>
 #include <array>
@@ -18,7 +18,9 @@ public:
     Buffer(char* begin, char* end)
     : begin_(begin)
     , end_(end){
-
+        for (char* i = begin_; i < end_; ++i) {
+            std::cout << *i << std::endl;
+        }
     }
 
     char* data() {

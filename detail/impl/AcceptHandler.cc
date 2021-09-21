@@ -7,26 +7,21 @@
 #include <utility>
 
 
+AcceptHandler::AcceptHandler(Reactor &reactor, int fd, AcceptCompleteHandler handler) : NetEventHandler(reactor,
+                                                                                                        fd),
+                                                                                        handler_(std::move(handler)) {}
 
 
 
-
-AcceptHandler::AcceptHandler(int fd, Reactor &reactor, AcceptCompleteHandler handler)
-: NetEventHandler(fd), reactor_(reactor), handler_(std::move(handler)) {
-
-}
-
-
-
-void AcceptHandler::handle() {
+void AcceptHandler::operator()() {
 
     int newSock = ::accept4(fd(), nullptr, nullptr, SOCK_CLOEXEC | SOCK_NONBLOCK);
 
     if (newSock < 0) {
-        handler_(std::error_code{errno, std::system_category()}, {reactor_, newSock});
+        handler_(std::error_code{errno, std::system_category()}, std::make_shared<ReadWriteSocket>(reactor(), newSock));
         return;
     }
 
-    handler_({}, {reactor_, newSock});
+    handler_({}, std::make_shared<ReadWriteSocket>(reactor(), newSock));
 
 }

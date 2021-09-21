@@ -7,6 +7,9 @@
 
 #include "NetEventHandler.h"
 #include <memory>
+#include <functional>
+
+using ConnectCompleteHandler = std::function<void(std::error_code)>;
 
 class ConnectHandler: public NetEventHandler, std::enable_shared_from_this<ConnectHandler>{
 

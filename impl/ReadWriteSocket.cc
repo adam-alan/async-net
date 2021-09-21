@@ -4,9 +4,9 @@
 
 #include <netinet/in.h>
 
-#include "../StreamSocket.h"
+#include "../ReadWriteSocket.h"
 
-StreamSocket::StreamSocket(Reactor& reactor)
+ReadWriteSocket::ReadWriteSocket(Reactor& reactor)
 : reactor_(reactor) {
     fd_ = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (fd_ < 0) {
@@ -17,13 +17,13 @@ StreamSocket::StreamSocket(Reactor& reactor)
 
 }
 
-StreamSocket::StreamSocket(Reactor& reactor, int fd)
+ReadWriteSocket::ReadWriteSocket(Reactor& reactor, int fd)
 : reactor_(reactor){
     fd_ = fd;
     reactor_.add(fd_);
 }
 
-void StreamSocket::bind(short port) const {
+void ReadWriteSocket::bind(short port) const {
     ::sockaddr_in addr{};
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
@@ -34,23 +34,20 @@ void StreamSocket::bind(short port) const {
     }
 }
 
-void StreamSocket::listen() {
+void ReadWriteSocket::listen() {
     if (::listen(fd_, 1024) < 0) {
         throw std::system_error(errno, std::system_category());
     }
 }
 
-void StreamSocket::read(Buffer buffer, ReadCompleteHandler handler) {
-    reactor_.registerRead(std::make_shared<ReadFullHandler>(fd_, reactor_, buffer, handler));
+void ReadWriteSocket::read(Buffer buffer, const ReadWriteCompleteHandler& handler) {
+
+    reactor_.registerRead(fd_, ReadFullHandler(reactor_, fd_, buffer, handler));
 }
 
 
-void StreamSocket::write(Buffer buffer, WriteCompleteHandler handler) {
-    reactor_.registerWrite(std::make_shared<WriteFullHandler>(fd_, reactor_, buffer, handler));
-}
-
-int StreamSocket::fd() const {
-    return fd_;
+void ReadWriteSocket::write(Buffer buffer, const ReadWriteCompleteHandler& handler) {
+    reactor_.registerRead(fd_, WriteFullHandler(reactor_, fd_, buffer, handler));
 }
 
 

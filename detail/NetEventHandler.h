@@ -5,21 +5,24 @@
 #ifndef ASYNC_NET__NETEVENTHANDLER_H_
 #define ASYNC_NET__NETEVENTHANDLER_H_
 
-
+#include "../Reactor.h"
 
 
 class NetEventHandler {
 public:
-    explicit NetEventHandler(int fd) {
-        this->fd_ = fd;
-    }
 
-    int fd() const {
+    NetEventHandler(Reactor &reactor, int fd) : reactor_(reactor), fd_(fd) {}
+
+    [[nodiscard]] int fd() {
         return fd_;
     }
-    virtual void handle() = 0;
+
+    [[nodiscard]] Reactor &reactor()  {
+        return reactor_;
+    }
 
 private:
+    Reactor& reactor_;
     int fd_{-1};
 };
 

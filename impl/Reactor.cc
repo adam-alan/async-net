@@ -12,31 +12,6 @@ void Reactor::add(int fd) {
         throw std::system_error{errno, std::system_category()};
     }
 }
-void Reactor::registerRead(std::shared_ptr<NetEventHandler> handler) {
-    fdToEventData[handler->fd()]->readQ.push(handler);
-    fdToEventData[handler->fd()]->events |= EPOLLIN;
-    std::cout << fdToEventData[handler->fd()]->events << std::endl;
-
-    ::epoll_event ev{};
-    ev.events = fdToEventData[handler->fd()]->events;
-    ev.data.fd = handler->fd();
-    if (wrapper_->modify(handler->fd(), ev)) {
-        throw std::system_error{errno, std::system_category()};
-    }
-}
-void Reactor::registerWrite(std::shared_ptr<NetEventHandler> handler) {
-    fdToEventData[handler->fd()]->writeQ.push(handler);
-
-    fdToEventData[handler->fd()]->events |= EPOLLOUT;
-    std::cout << fdToEventData[handler->fd()]->events << std::endl;
-    ::epoll_event ev{};
-    ev.events = fdToEventData[handler->fd()]->events;
-    ev.data.fd = handler->fd();
-    if (wrapper_->modify(handler->fd(), ev)) {
-        throw std::system_error{errno, std::system_category()};
-    }
-}
-
 
 void Reactor::run() {
     while (!isStop_) {
@@ -46,19 +21,19 @@ void Reactor::run() {
         for (int i = 0;i < nfs; ++i) {
 
             auto data = fdToEventData[events[i].data.fd];
-
+            std::cout << events[i].events << std::endl;
             if (events[i].events & EPOLLOUT ) {
-                if (!data->writeQ.empty()) {
-                    data->writeQ.front()->handle();
-                    data->writeQ.pop();
+                if (!data->writeQueue.empty()) {
+                    data->writeQueue.front()();
+                    data->writeQueue.pop();
                 }
             }
 
             if (events[i].events & EPOLLIN) {
-                if (!data->readQ.empty()) {
+                if (!data->readQueue.empty()) {
                     std::cout << "READ" << std::endl;
-                    data->readQ.front()->handle();
-                    data->readQ.pop();
+                    data->readQueue.front()();
+                    data->readQueue.pop();
                 }
             }
         }
@@ -68,6 +43,36 @@ void Reactor::run() {
 
 void Reactor::stop() {
     isStop_ = true;
+}
+void Reactor::registerRead(int fd, std::function<void()> handler) {
+    fdToEventData[fd]->readQueue.push(handler);
+    fdToEventData[fd]->events |= EPOLLIN | EPOLLET;
+    ::epoll_event ev{};
+    ev.events = fdToEventData[fd]->events;
+    ev.data.fd = fd;
+    if (wrapper_->modify(fd, ev)) {
+        throw std::system_error{errno, std::system_category()};
+    }
+}
+void Reactor::registerWrite(int fd, std::function<void()> handler) {
+    fdToEventData[fd]->readQueue.push(handler);
+    fdToEventData[fd]->events |= EPOLLOUT | EPOLLET;
+    ::epoll_event ev{};
+    ev.events = fdToEventData[fd]->events;
+    ev.data.fd = fd;
+    if (wrapper_->modify(fd, ev)) {
+        throw std::system_error{errno, std::system_category()};
+    }
+}
+void Reactor::registerUnWrite(int fd, std::function<void()> handler) {
+    fdToEventData[fd]->readQueue.push(handler);
+    fdToEventData[fd]->events &= ~EPOLLOUT;
+    ::epoll_event ev{};
+    ev.events = fdToEventData[fd]->events;
+    ev.data.fd = fd;
+    if (wrapper_->modify(fd, ev)) {
+        throw std::system_error{errno, std::system_category()};
+    }
 }
 
 

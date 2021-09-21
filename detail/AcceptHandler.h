@@ -8,17 +8,18 @@
 #include <memory>
 #include <functional>
 #include "NetEventHandler.h"
-#include "../StreamSocket.h"
+#include "../ReadWriteSocket.h"
 #include "../Reactor.h"
 
-using AcceptCompleteHandler = std::function<void(std::error_code, StreamSocket)>;
+using AcceptCompleteHandler = std::function<void(std::error_code, std::shared_ptr<ReadWriteSocket>)>;
 
-class AcceptHandler: public NetEventHandler, std::enable_shared_from_this<AcceptHandler>{
+class AcceptHandler: public NetEventHandler{
 public:
-    AcceptHandler(int fd, Reactor &reactor, AcceptCompleteHandler handler);
-    void handle() override;
+    AcceptHandler(Reactor &reactor, int fd, AcceptCompleteHandler handler);
+
+    void operator()();
+
 private:
-    Reactor& reactor_;
     AcceptCompleteHandler handler_;
 };
 
