@@ -15,11 +15,11 @@ void ReadWriteFullHandler::operator()() {
 
     totalBytes_ += bytes;
     if (totalBytes_ == initSize_) {
-        ioComplete();
+        onComplete();
         handler_({}, totalBytes_);
         return;
     }
     buffer_.moveStep(bytes);
-    ioUnComplete();
+    onUnComplete();
 }
 

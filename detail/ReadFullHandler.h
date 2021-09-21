@@ -12,7 +12,7 @@ public:
     ReadFullHandler(Reactor &reactor, int fd, const Buffer &buffer, const ReadWriteCompleteHandler &handler);
 protected:
     ssize_t io(int fd, void *buf, size_t n) override;
-    void ioComplete() override;
-    void ioUnComplete() override;
+    void onComplete() override;
+    void onUnComplete() override;
 };
 #endif //ASYNC_NET__READFULL_H_

@@ -14,10 +14,10 @@ ssize_t ReadFullHandler::io(int fd, void *buf, size_t n) {
     return ::read(fd, buf, n);
 }
 
-void ReadFullHandler::ioComplete() {
+void ReadFullHandler::onComplete() {
 
 }
 
-void ReadFullHandler::ioUnComplete() {
+void ReadFullHandler::onUnComplete() {
     reactor().registerRead(fd(), *this);
 }

@@ -22,8 +22,8 @@ public:
                                                                 handler_(std::move(handler)) {}
 protected:
     virtual ssize_t io(int fd, void* buf, size_t n) = 0;
-    virtual void ioComplete() = 0;
-    virtual void ioUnComplete() = 0;
+    virtual void onComplete() = 0;
+    virtual void onUnComplete() = 0;
 public:
     void operator()();
 private:

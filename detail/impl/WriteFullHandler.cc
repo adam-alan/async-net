@@ -18,10 +18,10 @@ ssize_t WriteFullHandler::io(int fd, void *buf, size_t n) {
     return ::write(fd, buf, n);
 }
 
-void WriteFullHandler::ioComplete() {
+void WriteFullHandler::onComplete() {
     reactor().registerUnWrite(fd(), *this);
 }
 
-void WriteFullHandler::ioUnComplete() {
+void WriteFullHandler::onUnComplete() {
     reactor().registerWrite(fd(), *this);
 }
