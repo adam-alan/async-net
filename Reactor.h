@@ -19,8 +19,8 @@ public:
 //    void registerUnWrite(std::shared_ptr<NetEventHandler> handler);
 
     void registerRead(int fd, std::function<void()> handler);
-    void registerWrite(int fd, std::function<void()> handler);
-    void registerUnWrite(int fd, std::function<void()> handler);
+    void registerWrite(int fd, const std::function<void()>& handler);
+    void registerUnWrite(int fd, const std::function<void()>& handler);
 
 
     void run();

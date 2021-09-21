@@ -54,7 +54,7 @@ void Reactor::registerRead(int fd, std::function<void()> handler) {
         throw std::system_error{errno, std::system_category()};
     }
 }
-void Reactor::registerWrite(int fd, std::function<void()> handler) {
+void Reactor::registerWrite(int fd, const std::function<void()>& handler) {
     fdToEventData[fd]->readQueue.push(handler);
     fdToEventData[fd]->events |= EPOLLOUT | EPOLLET;
     ::epoll_event ev{};
@@ -64,8 +64,8 @@ void Reactor::registerWrite(int fd, std::function<void()> handler) {
         throw std::system_error{errno, std::system_category()};
     }
 }
-void Reactor::registerUnWrite(int fd, std::function<void()> handler) {
-    fdToEventData[fd]->readQueue.push(handler);
+void Reactor::registerUnWrite(int fd, const std::function<void()>& handler) {
+    fdToEventData[fd]->writeQueue.push(handler);
     fdToEventData[fd]->events &= ~EPOLLOUT;
     ::epoll_event ev{};
     ev.events = fdToEventData[fd]->events;

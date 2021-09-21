@@ -39,14 +39,14 @@ public:
             }
         });
 
-//        readWriteSocket_->read(buffer(readBuf), [this, self] (std::error_code ec, size_t bytes){
-//            if(!ec) {
-//                std::cout << "read success with bytes of " << bytes << std::endl;
-//                std::cout << readBuf << std::endl;
-//            } else {
-//                std::cout << ec.message() << std::endl;
-//            }
-//        });
+        readWriteSocket_->read(buffer(readBuf), [this, self] (std::error_code ec, size_t bytes){
+            if(!ec) {
+                std::cout << "read success with bytes of " << bytes << std::endl;
+                std::cout << readBuf << std::endl;
+            } else {
+                std::cout << ec.message() << std::endl;
+            }
+        });
 
     }
 

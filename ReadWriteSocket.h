@@ -27,7 +27,7 @@ public:
 
     void bind(short port) const;
 
-    void listen();
+    void listen() const;
 
     void read(Buffer buffer, const ReadWriteCompleteHandler& handler);
 

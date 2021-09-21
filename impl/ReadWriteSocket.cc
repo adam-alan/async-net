@@ -34,7 +34,7 @@ void ReadWriteSocket::bind(short port) const {
     }
 }
 
-void ReadWriteSocket::listen() {
+void ReadWriteSocket::listen() const {
     if (::listen(fd_, 1024) < 0) {
         throw std::system_error(errno, std::system_category());
     }
@@ -47,7 +47,7 @@ void ReadWriteSocket::read(Buffer buffer, const ReadWriteCompleteHandler& handle
 
 
 void ReadWriteSocket::write(Buffer buffer, const ReadWriteCompleteHandler& handler) {
-    reactor_.registerRead(fd_, WriteFullHandler(reactor_, fd_, buffer, handler));
+    reactor_.registerWrite(fd_, WriteFullHandler(reactor_, fd_, buffer, handler));
 }
 
 
